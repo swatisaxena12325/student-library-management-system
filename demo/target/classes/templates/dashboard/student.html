@@ -1,0 +1,368 @@
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  lang="en"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard - Student Library System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/animations.css}" />
+    <style>
+      .dashboard-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        animation: slideInDown 0.6s ease-out;
+      }
+
+      .dashboard-hero h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .dashboard-hero p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+
+      .library-status {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .status-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .search-section {
+        background: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .search-container {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .search-container input {
+        flex: 1;
+        min-width: 250px;
+      }
+
+      .filter-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .filter-btn {
+        padding: 0.5rem 1rem;
+        border: 2px solid #dfe6e9;
+        background: white;
+        border-radius: 2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+      }
+
+      .filter-btn:hover,
+      .filter-btn.active {
+        border-color: #667eea;
+        color: #667eea;
+        background: #f0f3ff;
+      }
+
+      .books-section {
+        margin-bottom: 2rem;
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #2d3436;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      #booksContainer {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .my-issuances {
+        background: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-top: 2rem;
+      }
+
+      .issuance-list {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .issuance-item {
+        background: #f9f9f9;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        border-left: 4px solid #667eea;
+        animation: slideInLeft 0.5s ease-out;
+      }
+
+      .issuance-title {
+        font-weight: 600;
+        color: #2d3436;
+        margin-bottom: 0.25rem;
+      }
+
+      .issuance-author {
+        font-size: 0.9rem;
+        color: #636e72;
+        margin-bottom: 0.5rem;
+      }
+
+      .issuance-date {
+        font-size: 0.85rem;
+        color: #999;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #999;
+      }
+
+      .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+      }
+
+      @media (max-width: 768px) {
+        .dashboard-hero h1 {
+          font-size: 1.5rem;
+        }
+
+        .library-status {
+          gap: 1rem;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+        }
+
+        #booksContainer {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="navbar-container">
+        <div class="navbar-brand">
+          <a href="/dashboard" class="logo">
+            <span class="logo-icon">📚</span>
+            <span class="logo-text">Student Library</span>
+          </a>
+        </div>
+
+        <div class="navbar-menu" id="navbarMenu">
+          <a href="/dashboard/student" class="navbar-item">Dashboard</a>
+          <a
+            href="/dashboard/admin"
+            sec:authorize="hasRole('ADMIN')"
+            class="navbar-item"
+            >Admin Panel</a
+          >
+
+          <div class="navbar-user">
+            <span class="user-email" sec:authentication="name"></span>
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+    <button type="submit" class="navbar-item logout-btn">Logout</button>
+</form>
+          </div>
+        </div>
+
+        <button class="navbar-toggle" id="navbarToggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Hero Section -->
+      <div class="dashboard-hero">
+        <h1>Welcome to Your Library Dashboard 📚</h1>
+        <p>Browse books, issue them, and track your library activities</p>
+
+        <div class="library-status">
+          <div class="status-item">
+            <span>Current Status:</span>
+            <span id="libraryStatus">● Not in Library</span>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button
+            class="btn btn-success"
+            id="enterLibraryBtn"
+            onclick="enterLibrary()"
+            style="display: none"
+          >
+            ✓ Enter Library
+          </button>
+          <button
+            class="btn btn-danger"
+            id="exitLibraryBtn"
+            onclick="exitLibrary()"
+            style="display: none"
+          >
+            ✕ Exit Library
+          </button>
+        </div>
+      </div>
+
+      <!-- Search Section -->
+      <div class="search-section fade-in">
+        <h2 class="section-title">🔍 Browse Books</h2>
+
+        <div class="search-container">
+          <input
+            type="text"
+            id="bookSearchInput"
+            placeholder="Search by title, author, or ISBN..."
+          />
+        </div>
+
+        <div class="filter-buttons">
+          <button class="filter-btn active" onclick="loadAvailableBooks()">
+            All Books
+          </button>
+          <button class="filter-btn" onclick="filterByCategory('Fiction')">
+            Fiction
+          </button>
+          <button class="filter-btn" onclick="filterByCategory('Technology')">
+            Technology
+          </button>
+          <button class="filter-btn" onclick="filterByCategory('Science')">
+            Science
+          </button>
+          <button class="filter-btn" onclick="filterByCategory('Self-Help')">
+            Self-Help
+          </button>
+        </div>
+      </div>
+
+      <!-- Books Grid -->
+      <div class="books-section">
+        <div id="booksContainer" class="grid grid-3">
+          <div class="empty-state">
+            <div class="empty-state-icon">📖</div>
+            <p>Loading books...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- My Issuances -->
+      <div class="my-issuances" th:if="${userIssuances.size() > 0}">
+        <h2 class="section-title">📋 Your Issued Books</h2>
+        <div class="issuance-list">
+          <div
+            class="issuance-item stagger-item"
+            th:each="issuance : ${userIssuances}"
+          >
+            <div class="issuance-title" th:text="${issuance.book.title}">
+              Book Title
+            </div>
+            <div
+              class="issuance-author"
+              th:text="'by ' + ${issuance.book.author}"
+            >
+              Author
+            </div>
+            <div
+              class="issuance-date"
+              th:text="'Issued on: ' + ${#temporals.format(issuance.issuanceDate, 'dd MMM yyyy, hh:mm')}"
+            >
+              Issued Date
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="my-issuances" th:unless="${userIssuances.size() > 0}">
+        <div class="empty-state">
+          <div class="empty-state-icon">📭</div>
+          <p>You haven't issued any books yet</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-container">
+        <p>
+          &copy; 2026 Student Library Access Management System. All rights
+          reserved.
+        </p>
+        <p class="footer-info">
+          Designed with ❤️ for better library management
+        </p>
+      </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+      function filterByCategory(category) {
+        // Update active button
+        document.querySelectorAll(".filter-btn").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+        event.target.classList.add("active");
+
+        // Filter books by category
+        apiCall(`/api/books/category/${encodeURIComponent(category)}`)
+          .then((books) => displayBooks(books))
+          .catch((error) => showAlert("Error filtering books", "error"));
+      }
+    </script>
+  </body>
+</html>

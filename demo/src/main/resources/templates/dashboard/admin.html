@@ -1,0 +1,394 @@
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  lang="en"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Student Library System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/animations.css}" />
+    <style>
+      .admin-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .admin-header h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .stat-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #667eea;
+        animation: slideInUp 0.6s ease-out;
+        transition: all 0.3s ease;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .stat-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-label {
+        color: #636e72;
+        font-size: 0.95rem;
+      }
+
+      .stat-card.success {
+        border-left-color: #48dbfb;
+      }
+
+      .stat-card.success .stat-value {
+        color: #48dbfb;
+      }
+
+      .stat-card.warning {
+        border-left-color: #ffa502;
+      }
+
+      .stat-card.warning .stat-value {
+        color: #ffa502;
+      }
+
+      .stat-card.danger {
+        border-left-color: #ff6b6b;
+      }
+
+      .stat-card.danger .stat-value {
+        color: #ff6b6b;
+      }
+
+      .section-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+      }
+
+      .section-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #2d3436;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .table-responsive {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+      }
+
+      td {
+        padding: 1rem;
+        border-bottom: 1px solid #dfe6e9;
+      }
+
+      tbody tr:hover {
+        background-color: #f9f9f9;
+      }
+
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 2rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .badge-success {
+        background-color: #d4edda;
+        color: #155724;
+      }
+
+      .badge-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+
+      .badge-info {
+        background-color: #d1ecf1;
+        color: #0c5460;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: #999;
+      }
+
+      .student-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid #dfe6e9;
+        animation: slideInLeft 0.5s ease-out;
+      }
+
+      .student-item:last-child {
+        border-bottom: none;
+      }
+
+      .student-info {
+        flex: 1;
+      }
+
+      .student-name {
+        font-weight: 600;
+        color: #2d3436;
+        margin-bottom: 0.25rem;
+      }
+
+      .student-email {
+        font-size: 0.85rem;
+        color: #636e72;
+      }
+
+      @media (max-width: 768px) {
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .admin-header h1 {
+          font-size: 1.5rem;
+        }
+
+        .table-responsive {
+          font-size: 0.9rem;
+        }
+
+        th,
+        td {
+          padding: 0.75rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="navbar-container">
+        <div class="navbar-brand">
+          <a href="/dashboard" class="logo">
+            <span class="logo-icon">📚</span>
+            <span class="logo-text">Student Library</span>
+          </a>
+        </div>
+
+        <div class="navbar-menu" id="navbarMenu">
+          <a href="/dashboard" class="navbar-item">Dashboard</a>
+          <a href="/dashboard/admin" class="navbar-item">Admin Panel</a>
+
+          <div class="navbar-user">
+            <span class="user-email" sec:authentication="name"></span>
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+    <button type="submit" class="navbar-item logout-btn">Logout</button>
+</form>
+          </div>
+        </div>
+
+        <button class="navbar-toggle" id="navbarToggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content admin-dashboard">
+      <!-- Header -->
+      <div class="admin-header fade-in">
+        <h1>👨‍💼 Admin Dashboard</h1>
+        <p>Monitor library activities, student access, and book issuances</p>
+      </div>
+
+      <!-- Statistics -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" th:text="${totalStudents}">0</div>
+          <div class="stat-label">Total Students</div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-value" th:text="${totalBooks}">0</div>
+          <div class="stat-label">Total Books</div>
+        </div>
+        <div class="stat-card warning">
+          <div class="stat-value" th:text="${totalIssuances}">0</div>
+          <div class="stat-label">Total Issuances</div>
+        </div>
+        <div class="stat-card danger">
+          <div class="stat-value" th:text="${currentlyInLibrary.size()}">0</div>
+          <div class="stat-label">Currently in Library</div>
+        </div>
+      </div>
+
+      <!-- Currently in Library -->
+      <div class="section-card">
+        <h2 class="section-title">👥 Students Currently in Library</h2>
+        <div th:if="${currentlyInLibrary.isEmpty()}" class="empty-state">
+          <p>No students currently in the library</p>
+        </div>
+        <div
+          class="table-responsive"
+          th:unless="${currentlyInLibrary.isEmpty()}"
+        >
+          <table>
+            <thead>
+              <tr>
+                <th>Student Name</th>
+                <th>Email</th>
+                <th>Entry Time</th>
+                <th>Duration</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="stagger-item" th:each="log : ${currentlyInLibrary}">
+                <td th:text="${log.user.name}">Name</td>
+                <td th:text="${log.user.email}">Email</td>
+                <td
+                  th:text="${#temporals.format(log.entryTime, 'dd MMM yyyy, HH:mm')}"
+                >
+                  Entry
+                </td>
+                <td><span class="badge badge-info">In Library</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Recent Book Issuances -->
+      <div class="section-card">
+        <h2 class="section-title">📚 Recent Book Issuances</h2>
+        <div th:if="${issuances.isEmpty()}" class="empty-state">
+          <p>No book issuances yet</p>
+        </div>
+        <div class="table-responsive" th:unless="${issuances.isEmpty()}">
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Book Title</th>
+                <th>Author</th>
+                <th>Issuance Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                class="stagger-item"
+                th:each="issuance : ${#lists.subList(issuances, 0, #lists.size(issuances) > 10 ? 10 : #lists.size(issuances))}"
+              >
+                <td th:text="${issuance.issuedBy.name}">Student</td>
+                <td th:text="${issuance.book.title}">Title</td>
+                <td th:text="${issuance.book.author}">Author</td>
+                <td
+                  th:text="${#temporals.format(issuance.issuanceDate, 'dd MMM yyyy, HH:mm')}"
+                >
+                  Date
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- All Students -->
+      <div class="section-card">
+        <h2 class="section-title">👨‍🎓 All Registered Students</h2>
+        <div th:if="${students.isEmpty()}" class="empty-state">
+          <p>No students registered yet</p>
+        </div>
+        <div class="stagger-item" th:each="student : ${students}">
+          <div class="student-item">
+            <div class="student-info">
+              <div class="student-name" th:text="${student.name}">
+                Student Name
+              </div>
+              <div class="student-email" th:text="${student.email}">
+                email@example.com
+              </div>
+            </div>
+            <div>
+              <span
+                class="badge"
+                th:classappend="${student.emailVerified} ? 'badge-success' : 'badge-danger'"
+              >
+                <span
+                  th:text="${student.emailVerified} ? 'Verified' : 'Pending'"
+                ></span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-container">
+        <p>
+          &copy; 2026 Student Library Access Management System. All rights
+          reserved.
+        </p>
+        <p class="footer-info">
+          Designed with ❤️ for better library management
+        </p>
+      </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+      // Auto-refresh admin dashboard every 30 seconds
+      setInterval(() => {
+        location.reload();
+      }, 30000);
+    </script>
+  </body>
+</html>

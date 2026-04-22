@@ -1,0 +1,154 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Verified - Student Library System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/animations.css}" />
+    <style>
+      .verification-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #48dbfb 0%, #0984e3 100%);
+        padding: 2rem;
+      }
+
+      .verification-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 3rem 2rem;
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      }
+
+      .verification-icon {
+        font-size: 5rem;
+        margin-bottom: 1.5rem;
+        animation: bounce 1s ease-in-out infinite;
+      }
+
+      .verification-title {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #2d3436;
+        margin-bottom: 1rem;
+      }
+
+      .verification-subtitle {
+        color: #48dbfb;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .verification-message {
+        color: #636e72;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+      }
+
+      .success-info {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin: 1.5rem 0;
+        color: #155724;
+      }
+
+      .email-display {
+        background-color: #f0f3ff;
+        border: 1px solid #d4e1ff;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin: 1rem 0;
+        font-weight: 600;
+        color: #667eea;
+        word-break: break-all;
+      }
+
+      .btn-group {
+        margin-top: 2rem;
+        display: flex;
+        gap: 1rem;
+        flex-direction: column;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        border: none;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #48dbfb 0%, #0984e3 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(72, 219, 251, 0.4);
+      }
+
+      .checkmark {
+        width: 80px;
+        height: 80px;
+        margin: 1rem auto;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #48dbfb 0%, #0984e3 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: scaleIn 0.6s ease-out;
+      }
+
+      .checkmark::after {
+        content: "✓";
+        color: white;
+        font-size: 3rem;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="verification-container">
+      <div class="verification-card fade-in">
+        <div class="checkmark"></div>
+
+        <h1 class="verification-title">Email Verified Successfully!</h1>
+        <p class="verification-subtitle">Your account is now active</p>
+
+        <p class="verification-message">
+          Congratulations! Your email has been verified and your account is now
+          ready to use.
+        </p>
+
+        <div class="email-display" th:if="${email}">
+          <span th:text="${email}"></span>
+        </div>
+
+        <div class="success-info">
+          <strong>✓ Your account is now fully activated</strong><br />
+          You can now log in and start using the library system to browse and
+          issue books.
+        </div>
+
+        <div class="btn-group">
+          <a href="/auth/login" class="btn btn-primary"> Go to Login </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

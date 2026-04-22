@@ -1,0 +1,276 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - Student Library System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/animations.css}" />
+    <style>
+      .auth-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem;
+      }
+
+      .auth-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        animation: slideInUp 0.6s ease-out;
+      }
+
+      .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .auth-logo {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      .auth-title {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #2d3436;
+        margin-bottom: 0.5rem;
+      }
+
+      .auth-subtitle {
+        color: #636e72;
+        font-size: 0.95rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #2d3436;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      input[type="password"] {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #dfe6e9;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      input[type="text"]:focus,
+      input[type="email"]:focus,
+      input[type="password"]:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .btn-register {
+        width: 100%;
+        padding: 0.75rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-register:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-register:active {
+        transform: translateY(0);
+      }
+
+      .alert {
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        animation: slideDown 0.3s ease-out;
+      }
+
+      .alert-error {
+        background-color: #f8d7da;
+        border-left: 4px solid #ff6b6b;
+        color: #721c24;
+      }
+
+      .auth-footer {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: #636e72;
+      }
+
+      .auth-footer a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .auth-footer a:hover {
+        color: #764ba2;
+        text-decoration: underline;
+      }
+
+      .divider {
+        text-align: center;
+        margin: 2rem 0;
+        color: #636e72;
+        font-size: 0.9rem;
+      }
+
+      .password-requirements {
+        background-color: #f0f3ff;
+        border: 1px solid #d4e1ff;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-top: 1.5rem;
+        font-size: 0.85rem;
+      }
+
+      .password-requirements h4 {
+        margin-bottom: 0.5rem;
+        color: #667eea;
+      }
+
+      .password-requirements ul {
+        margin: 0;
+        padding-left: 1.5rem;
+      }
+
+      .password-requirements li {
+        margin: 0.25rem 0;
+        color: #636e72;
+      }
+
+      .form-error {
+        color: #ff6b6b;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="auth-logo">📚</div>
+          <h1 class="auth-title">Create Account</h1>
+          <p class="auth-subtitle">Join the Student Library System</p>
+        </div>
+
+        <div th:if="${error}" class="alert alert-error">
+          <strong>Registration Failed!</strong> <span th:text="${error}"></span>
+        </div>
+
+        <form method="post" th:action="@{/auth/register}" class="fade-in">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Your full name"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="your@email.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Create a strong password"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="Re-enter your password"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn-register" id="registerBtn">
+            Register Account
+          </button>
+        </form>
+
+        <div class="divider">Already have an account?</div>
+
+        <a
+          href="/auth/login"
+          class="btn btn-outline btn-block"
+          style="text-align: center"
+        >
+          Login Here
+        </a>
+
+        <div class="password-requirements">
+          <h4>🔐 Password Requirements</h4>
+          <ul>
+            <li>At least 8 characters long</li>
+            <li>Mix of uppercase and lowercase letters</li>
+            <li>Include at least one number</li>
+            <li>Include at least one special character</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.querySelector("form").addEventListener("submit", function (e) {
+        const password = document.querySelector("#password").value;
+        const confirmPassword =
+          document.querySelector("#confirmPassword").value;
+
+        if (password !== confirmPassword) {
+          e.preventDefault();
+          alert("Passwords do not match!");
+          return false;
+        }
+
+        const btn = document.querySelector("#registerBtn");
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loader loader-sm"></span> Registering...';
+      });
+    </script>
+  </body>
+</html>

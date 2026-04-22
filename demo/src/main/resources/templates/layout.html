@@ -1,0 +1,85 @@
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  lang="en"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${pageTitle} + ' - Student Library System'" th:remove="tag">
+      Student Library System
+    </title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/animations.css}" />
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar" sec:authorize="isAuthenticated()">
+      <div class="navbar-container">
+        <div class="navbar-brand">
+          <a href="/dashboard" class="logo">
+            <span class="logo-icon">📚</span>
+            <span class="logo-text">Student Library</span>
+          </a>
+        </div>
+
+        <div class="navbar-menu" id="navbarMenu">
+          <a href="/dashboard" class="navbar-item">Dashboard</a>
+          <a
+            href="/dashboard/student"
+            sec:authorize="hasRole('USER')"
+            class="navbar-item"
+            >Browse Books</a
+          >
+          <a
+            href="/dashboard/admin"
+            sec:authorize="hasRole('ADMIN')"
+            class="navbar-item"
+            >Admin Panel</a
+          >
+
+          <div class="navbar-user">
+            <span class="user-email" sec:authentication="name"></span>
+            <a href="/auth/logout" class="navbar-item logout-btn">Logout</a>
+          </div>
+        </div>
+
+        <button class="navbar-toggle" id="navbarToggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div th:if="${message}" class="alert alert-success">
+        <span th:text="${message}"></span>
+      </div>
+      <div th:if="${error}" class="alert alert-error">
+        <span th:text="${error}"></span>
+      </div>
+
+      <div class="page-container">
+        <th:block th:include="this :: page-content"></th:block>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" sec:authorize="isAuthenticated()">
+      <div class="footer-container">
+        <p>
+          &copy; 2026 Student Library Access Management System. All rights
+          reserved.
+        </p>
+        <p class="footer-info">
+          Designed with ❤️ for better library management
+        </p>
+      </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+  </body>
+</html>
